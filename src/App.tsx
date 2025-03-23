@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import DrugSearch from "./components/drug-search.tsx";
+import {useState} from "react";
+import {Drug} from "./types/drugs.ts";
+import DrugsList from "./components/drugs-list.tsx";
+import { Dayjs } from 'dayjs';
 
 function App() {
-  const [count, setCount] = useState(0)
+    const [drugs, setDrugs] = useState<Drug[]>([]);
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const handleDrugSelect = (drug: Drug)  => {
+        const newList = [...drugs];
+        newList.push(drug);
+        setDrugs(newList);
+    }
+
+    const handleDrugRemove = (drug: Drug) => {
+        const newList = drugs.filter(d => d.name !== drug.name)
+        setDrugs(newList);
+    }
+
+
+    const handleDateUpdate = (drug: Drug, date: Dayjs | null) => {
+        const newList = drugs.map(d => {
+            if(d.name === drug.name) {
+                d.date = date;
+            }
+            return d
+        });
+        setDrugs(newList);
+    }
+
+    return (
+        <>
+            <h1>Drug Prescription App</h1>
+            <DrugSearch onDrugSelect={handleDrugSelect}/>
+            <DrugsList drugs={drugs} onDrugRemove={handleDrugRemove} onDateUpdate={handleDateUpdate}/>
+        </>
+    )
 }
 
-export default App
+export default App;
